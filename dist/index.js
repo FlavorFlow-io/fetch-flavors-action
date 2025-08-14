@@ -31241,18 +31241,100 @@ function requireGithub () {
 
 var githubExports = requireGithub();
 
+async function fetchFlavors(apiKey) {
+  try {
+    const response = await fetch("https://ilesfsxvmvavrlmojmba.supabase.co/functions/v1/project-flavors", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Accept": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const flavors = await response.json();
+    return flavors;
+  } catch (error) {
+    throw new Error(`Failed to fetch flavors: ${error.message}`);
+  }
+}
+
+async function triggerBuildWorkflow(octokit, owner, repo, workflowId, flavor) {
+  try {
+    coreExports.info(`Triggering build workflow for flavor: ${flavor.name || flavor.id || 'unknown'}`);
+    
+    const response = await octokit.rest.actions.createWorkflowDispatch({
+      owner,
+      repo,
+      workflow_id: workflowId,
+      ref: 'main', // or the branch you want to trigger on
+      inputs: {
+        flavor: JSON.stringify(flavor),
+        flavorName: flavor.name || flavor.id || 'unknown',
+        flavorId: flavor.id || flavor.name || 'unknown'
+      }
+    });
+    
+    coreExports.info(`Successfully triggered build workflow for flavor: ${flavor.name || flavor.id}`);
+    return response;
+  } catch (error) {
+    coreExports.error(`Failed to trigger build workflow for flavor ${flavor.name || flavor.id}: ${error.message}`);
+    throw error;
+  }
+}
+
 try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = coreExports.getInput("who-to-greet");
-  coreExports.info(`Hello ${nameToGreet}!`);
+  // Get inputs
+  const apiKey = coreExports.getInput("project-api-key");
+  const buildWorkflow = coreExports.getInput("build-workflow");
+  const githubToken = coreExports.getInput("github-token");
+  
+  if (!apiKey) {
+    throw new Error("project-api-key input is required");
+  }
+  
+  if (!buildWorkflow) {
+    throw new Error("build-workflow input is required");
+  }
 
-  // Get the current time and set it as an output variable
-  const time = new Date().toTimeString();
-  coreExports.setOutput("time", time);
+  coreExports.info("Fetching flavors...");
 
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(githubExports.context.payload, undefined, 2);
-  coreExports.info(`The event payload: ${payload}`);
+  // Fetch flavors using the API key
+  const flavors = await fetchFlavors(apiKey);
+  
+  coreExports.info(`Successfully fetched ${flavors.length || 0} flavors`);
+  
+  // Set the flavors as output
+  coreExports.setOutput("flavors", JSON.stringify(flavors));
+  
+  // Log the flavors for debugging (consider removing in production)
+  coreExports.info(`Flavors: ${JSON.stringify(flavors, null, 2)}`);
+
+  // Trigger build workflow for each flavor if build-workflow is specified
+  if (buildWorkflow && githubToken) {
+    const octokit = githubExports.getOctokit(githubToken);
+    const { owner, repo } = githubExports.context.repo;
+    
+    coreExports.info(`Triggering build workflow "${buildWorkflow}" for ${flavors.length} flavors...`);
+    
+    const buildPromises = flavors.map(flavor => 
+      triggerBuildWorkflow(octokit, owner, repo, buildWorkflow, flavor)
+    );
+    
+    try {
+      await Promise.all(buildPromises);
+      coreExports.info("Successfully triggered build workflows for all flavors");
+    } catch (error) {
+      coreExports.error(`Some build workflows failed to trigger: ${error.message}`);
+      // Continue execution even if some workflows fail
+    }
+  } else if (buildWorkflow && !githubToken) {
+    coreExports.warning("build-workflow specified but github-token not provided. Skipping workflow triggers.");
+  }
+
 } catch (error) {
   coreExports.setFailed(error.message);
 }
