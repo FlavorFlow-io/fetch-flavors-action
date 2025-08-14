@@ -11,6 +11,9 @@ inputs:
   deploy-workflow:
     description: The workflow file for deploying the app
     required: true
+  github-token:
+    description: The GitHub token to use for API calls
+    required: true
   
 
 outputs:
