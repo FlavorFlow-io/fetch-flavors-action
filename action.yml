@@ -5,6 +5,13 @@ inputs:
   project-api-key: # id of input
     description: The project API key to use
     required: true
+  build-workflow:
+    description: The workflow file for building the app
+    required: true
+  deploy-workflow:
+    description: The workflow file for deploying the app
+    required: true
+  
 
 outputs:
   time: # id of output

@@ -15,8 +15,14 @@ async function fetchFlavors(apiKey) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const flavors = await response.json();
-    return flavors;
+    const data = await response.json();
+    
+    // Extract flavors array from the response
+    if (!data.flavors || !Array.isArray(data.flavors)) {
+      throw new Error("Response does not contain a valid 'flavors' array");
+    }
+    
+    return data.flavors;
   } catch (error) {
     throw new Error(`Failed to fetch flavors: ${error.message}`);
   }
@@ -50,14 +56,19 @@ try {
   // Get inputs
   const apiKey = core.getInput("project-api-key");
   const buildWorkflow = core.getInput("build-workflow");
-  const githubToken = core.getInput("github-token");
-  
+  // Use GITHUB_TOKEN from environment (automatically available in GitHub Actions)
+  const githubToken = process.env.GITHUB_TOKEN || core.getInput("github-token");
+
   if (!apiKey) {
     throw new Error("project-api-key input is required");
   }
   
   if (!buildWorkflow) {
     throw new Error("build-workflow input is required");
+  }
+
+  if (!githubToken) {
+    throw new Error("GITHUB_TOKEN environment variable or github-token input is required");
   }
 
   core.info("Fetching flavors...");
@@ -73,26 +84,22 @@ try {
   // Log the flavors for debugging (consider removing in production)
   core.info(`Flavors: ${JSON.stringify(flavors, null, 2)}`);
 
-  // Trigger build workflow for each flavor if build-workflow is specified
-  if (buildWorkflow && githubToken) {
-    const octokit = github.getOctokit(githubToken);
-    const { owner, repo } = github.context.repo;
-    
-    core.info(`Triggering build workflow "${buildWorkflow}" for ${flavors.length} flavors...`);
-    
-    const buildPromises = flavors.map(flavor => 
-      triggerBuildWorkflow(octokit, owner, repo, buildWorkflow, flavor)
-    );
-    
-    try {
-      await Promise.all(buildPromises);
-      core.info("Successfully triggered build workflows for all flavors");
-    } catch (error) {
-      core.error(`Some build workflows failed to trigger: ${error.message}`);
-      // Continue execution even if some workflows fail
-    }
-  } else if (buildWorkflow && !githubToken) {
-    core.warning("build-workflow specified but github-token not provided. Skipping workflow triggers.");
+  // Trigger build workflow for each flavor
+  const octokit = github.getOctokit(githubToken);
+  const { owner, repo } = github.context.repo;
+  
+  core.info(`Triggering build workflow "${buildWorkflow}" for ${flavors.length} flavors...`);
+  
+  const buildPromises = flavors.map(flavor => 
+    triggerBuildWorkflow(octokit, owner, repo, buildWorkflow, flavor)
+  );
+  
+  try {
+    await Promise.all(buildPromises);
+    core.info("Successfully triggered build workflows for all flavors");
+  } catch (error) {
+    core.error(`Some build workflows failed to trigger: ${error.message}`);
+    // Continue execution even if some workflows fail
   }
 
 } catch (error) {
