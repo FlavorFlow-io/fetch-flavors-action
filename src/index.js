@@ -1,5 +1,4 @@
 import * as core from "@actions/core";
-import * as github from "@actions/github";
 
 async function fetchFlavors(apiKey) {
   try {
@@ -28,47 +27,12 @@ async function fetchFlavors(apiKey) {
   }
 }
 
-async function triggerBuildWorkflow(octokit, owner, repo, workflowId, flavor) {
-  try {
-    core.info(`Triggering build workflow for flavor: ${flavor.name || flavor.id || 'unknown'}`);
-    
-    const response = await octokit.rest.actions.createWorkflowDispatch({
-      owner,
-      repo,
-      workflow_id: workflowId,
-      ref: 'main', // or the branch you want to trigger on
-      inputs: {
-        flavor: JSON.stringify(flavor),
-        flavorName: flavor.name || flavor.id || 'unknown',
-        flavorId: flavor.id || flavor.name || 'unknown'
-      }
-    });
-    
-    core.info(`Successfully triggered build workflow for flavor: ${flavor.name || flavor.id}`);
-    return response;
-  } catch (error) {
-    core.error(`Failed to trigger build workflow for flavor ${flavor.name || flavor.id}: ${error.message}`);
-    throw error;
-  }
-}
-
 try {
   // Get inputs
   const apiKey = core.getInput("project-api-key");
-  const buildWorkflow = core.getInput("build-workflow");
-  // Use GITHUB_TOKEN from environment (automatically available in GitHub Actions)
-  const githubToken = process.env.GITHUB_TOKEN || core.getInput("github-token");
 
   if (!apiKey) {
     throw new Error("project-api-key input is required");
-  }
-  
-  if (!buildWorkflow) {
-    throw new Error("build-workflow input is required");
-  }
-
-  if (!githubToken) {
-    throw new Error("GITHUB_TOKEN environment variable or github-token input is required");
   }
 
   core.info("Fetching flavors...");
@@ -78,29 +42,12 @@ try {
   
   core.info(`Successfully fetched ${flavors.length || 0} flavors`);
   
-  // Set the flavors as output
+  // Set outputs for matrix strategy
   core.setOutput("flavors", JSON.stringify(flavors));
+  core.setOutput("matrix", JSON.stringify({ include: flavors }));
   
-  // Log the flavors for debugging (consider removing in production)
+  // Log the flavors for debugging
   core.info(`Flavors: ${JSON.stringify(flavors, null, 2)}`);
-
-  // Trigger build workflow for each flavor
-  const octokit = github.getOctokit(githubToken);
-  const { owner, repo } = github.context.repo;
-  
-  core.info(`Triggering build workflow "${buildWorkflow}" for ${flavors.length} flavors...`);
-  
-  const buildPromises = flavors.map(flavor => 
-    triggerBuildWorkflow(octokit, owner, repo, buildWorkflow, flavor)
-  );
-  
-  try {
-    await Promise.all(buildPromises);
-    core.info("Successfully triggered build workflows for all flavors");
-  } catch (error) {
-    core.error(`Some build workflows failed to trigger: ${error.message}`);
-    // Continue execution even if some workflows fail
-  }
 
 } catch (error) {
   core.setFailed(error.message);

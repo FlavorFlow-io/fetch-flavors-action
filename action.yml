@@ -1,24 +1,16 @@
-name: Hello World
-description: Greet someone and record the time
+name: Fetch Flavors
+description: Fetch flavors from API and generate matrix for builds
 
 inputs:
-  project-api-key: # id of input
-    description: The project API key to use
+  project-api-key:
+    description: 'The project API key to fetch flavors'
     required: true
-  build-workflow:
-    description: The workflow file for building the app
-    required: true
-  deploy-workflow:
-    description: The workflow file for deploying the app
-    required: true
-  github-token:
-    description: The GitHub token to use for API calls
-    required: true
-  
 
 outputs:
-  time: # id of output
-    description: The time we greeted you
+  matrix:
+    description: 'Matrix configuration for GitHub Actions'
+  flavors:
+    description: 'JSON array of all flavors'
 
 runs:
   using: node20
