@@ -27290,7 +27290,6 @@ try {
   
   // Set outputs for matrix strategy
   coreExports.setOutput("flavors", JSON.stringify(flavors));
-  coreExports.setOutput("matrix", JSON.stringify({ include: flavors }));
   
   // Log the flavors for debugging
   coreExports.info(`Flavors: ${JSON.stringify(flavors, null, 2)}`);

@@ -7,8 +7,6 @@ inputs:
     required: true
 
 outputs:
-  matrix:
-    description: 'Matrix configuration for GitHub Actions'
   flavors:
     description: 'JSON array of all flavors'
 

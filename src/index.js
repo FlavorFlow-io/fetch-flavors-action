@@ -44,7 +44,6 @@ try {
   
   // Set outputs for matrix strategy
   core.setOutput("flavors", JSON.stringify(flavors));
-  core.setOutput("matrix", JSON.stringify({ include: flavors }));
   
   // Log the flavors for debugging
   core.info(`Flavors: ${JSON.stringify(flavors, null, 2)}`);

@@ -1,23 +1,68 @@
-# Hello world JavaScript action
+<p align="center">
+  <img src="./prisme_logo.png" alt="Prisme Logo" width="180" />
+</p>
 
-This action prints "Hello World" or "Hello" + the name of a person to greet to the log.
+# Fetch Flavors GitHub Action
+
+This action fetches and outputs the available flavors for your project. It is useful for workflows that need to dynamically retrieve and use flavor information (e.g., for building, testing, or deploying different variants).
+
+**Related SaaS:** [prisme.lucianosantos.dev](https://prisme.lucianosantos.dev)
+
+**About the SaaS:**
+
+[prisme.lucianosantos.dev](https://prisme.lucianosantos.dev) is a portal to manage white-label app clients. It helps you organize, configure, and maintain multiple branded versions of your application, streamlining the process of delivering customized apps to different customers.
 
 ## Inputs
 
-### `who-to-greet`
+### `project-api-key`
 
-**Required** The name of the person to greet. Default `"World"`.
+**Required** The project API key used to fetch flavors from the API.
 
 ## Outputs
 
-### `time`
+### `flavors`
 
-The time we greeted you.
+The list of available flavors as a JSON array string.
+
 
 ## Example usage
 
 ```yaml
-uses: lssoftwares/fetch-flavors-action
-with:
-  who-to-greet: Mona the Octocat
+# Access the output flavors in a subsequent step:
+steps:
+  - id: fetch-flavors
+    uses: prisme/fetch-flavors-action@v1
+    with:
+      project-api-key: ${{ secrets.PROJECT_API_KEY }}
+  - name: Print flavors
+    run: echo "Flavors: ${{ steps.fetch-flavors.outputs.flavors }}"
+```
+
+## Matrix build example
+
+You can use the output flavors to create a dynamic matrix build in your workflow:
+
+```yaml
+jobs:
+  fetch-flavors:
+    runs-on: ubuntu-latest
+    outputs:
+      flavors: ${{ steps.fetch-flavors.outputs.flavors }}
+    steps:
+      - id: fetch-flavors
+        uses: prisme/fetch-flavors-action@v1
+        with:
+          project-api-key: ${{ secrets.PROJECT_API_KEY }}
+
+  build:
+    needs: fetch-flavors
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flavor: ${{ fromJson(needs.fetch-flavors.outputs.flavors) }}
+    steps:
+      - name: Build for flavor
+        run: |
+          echo "Building for flavor: ${{ matrix.flavor }}"
+          # add your build steps here
 ```
