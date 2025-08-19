@@ -6,8 +6,6 @@
 
 This action fetches and outputs the available flavors for your project. It is useful for workflows that need to dynamically retrieve and use flavor information (e.g., for building, testing, or deploying different variants).
 
-**Related SaaS:** [prisme.lucianosantos.dev](https://prisme.lucianosantos.dev)
-
 **About the SaaS:**
 
 [prisme.lucianosantos.dev](https://prisme.lucianosantos.dev) is a portal to manage white-label app clients. It helps you organize, configure, and maintain multiple branded versions of your application, streamlining the process of delivering customized apps to different customers.
