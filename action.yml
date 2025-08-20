@@ -1,5 +1,9 @@
-name: Fetch Flavors
+name: Prisme Fetch Flavors
 description: Fetch flavors from API and generate matrix for builds
+
+branding:
+  icon: smartphone
+  color: blue
 
 inputs:
   project-api-key:

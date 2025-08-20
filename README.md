@@ -29,7 +29,7 @@ The list of available flavors as a JSON array string.
 # Access the output flavors in a subsequent step:
 steps:
   - id: fetch-flavors
-    uses: prisme/fetch-flavors-action@v1
+    uses: lucianosantosdev/prisme-fetch-flavors-action@v1
     with:
       project-api-key: ${{ secrets.PROJECT_API_KEY }}
   - name: Print flavors
@@ -48,7 +48,7 @@ jobs:
       flavors: ${{ steps.fetch-flavors.outputs.flavors }}
     steps:
       - id: fetch-flavors
-        uses: prisme/fetch-flavors-action@v1
+        uses: lucianosantosdev/prisme-fetch-flavors-action@v1
         with:
           project-api-key: ${{ secrets.PROJECT_API_KEY }}
 
