@@ -4,6 +4,8 @@
 
 # Fetch Flavors GitHub Action
 
+[![Latest Release](https://img.shields.io/github/v/release/lucianosantosdev/prisme-fetch-flavors-action?label=latest%20version)](https://github.com/lucianosantosdev/prisme-fetch-flavors-action/releases)
+
 This action fetches and outputs the available flavors for your project. It is useful for workflows that need to dynamically retrieve and use flavor information (e.g., for building, testing, or deploying different variants).
 
 **About the SaaS:**
@@ -24,6 +26,8 @@ The list of available flavors as a JSON array string.
 
 
 ## Example usage
+
+**Note:** Replace `v1` with the latest version shown in the badge above, or use a specific version tag for better reproducibility.
 
 ```yaml
 # Access the output flavors in a subsequent step:

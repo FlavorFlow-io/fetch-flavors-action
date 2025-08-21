@@ -27257,7 +27257,20 @@ async function fetchFlavors(apiKey) {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.error || errorData.message) {
+          errorMessage += `\n${errorData.message || errorData.error}`;
+          if (errorData.details) {
+            errorMessage += `\nDetails: ${JSON.stringify(errorData.details)}`;
+          }
+        }
+      } catch (parseError) {
+        // If we can't parse the error response, use the default message
+        coreExports.debug(`Could not parse error response: ${parseError.message}`);
+      }
+      throw new Error(errorMessage);
     }
 
     const data = await response.json();
