@@ -43,7 +43,7 @@ try {
   core.info(`Successfully fetched ${flavors.length || 0} flavors`);
   
   // Set outputs for matrix strategy
-  core.setOutput("flavors", JSON.stringify(flavors));
+  coreExports.setOutput("flavors", JSON.stringify({ include: flavors }));
   
   // Log the flavors for debugging
   core.info(`Flavors: ${JSON.stringify(flavors, null, 2)}`);
