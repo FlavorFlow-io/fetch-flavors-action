@@ -27244,7 +27244,7 @@ function requireCore () {
 	return core;
 }
 
-var coreExports$1 = requireCore();
+var coreExports = requireCore();
 
 async function fetchFlavors(apiKey) {
   try {
@@ -27275,26 +27275,26 @@ async function fetchFlavors(apiKey) {
 
 try {
   // Get inputs
-  const apiKey = coreExports$1.getInput("project-api-key");
+  const apiKey = coreExports.getInput("project-api-key");
 
   if (!apiKey) {
     throw new Error("project-api-key input is required");
   }
 
-  coreExports$1.info("Fetching flavors...");
+  coreExports.info("Fetching flavors...");
 
   // Fetch flavors using the API key
   const flavors = await fetchFlavors(apiKey);
   
-  coreExports$1.info(`Successfully fetched ${flavors.length || 0} flavors`);
+  coreExports.info(`Successfully fetched ${flavors.length || 0} flavors`);
   
   // Set outputs for matrix strategy
   coreExports.setOutput("flavors", JSON.stringify({ include: flavors }));
   
   // Log the flavors for debugging
-  coreExports$1.info(`Flavors: ${JSON.stringify(flavors, null, 2)}`);
+  coreExports.info(`Flavors: ${JSON.stringify(flavors, null, 2)}`);
 
 } catch (error) {
-  coreExports$1.setFailed(error.message);
+  coreExports.setFailed(error.message);
 }
 //# sourceMappingURL=index.js.map
