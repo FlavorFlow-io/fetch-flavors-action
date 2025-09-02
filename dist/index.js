@@ -27248,7 +27248,7 @@ var coreExports = requireCore();
 
 async function fetchClients(apiKey) {
   try {
-    const response = await fetch("https://ilesfsxvmvavrlmojmba.supabase.co/functions/v1/project-Clients", {
+    const response = await fetch("https://ilesfsxvmvavrlmojmba.supabase.co/functions/v1/fetch-clients", {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
