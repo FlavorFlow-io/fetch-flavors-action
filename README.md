@@ -1,10 +1,11 @@
 <p align="center">
   <img src="./flavorflow_logo.png" alt="FlavorFlow Logo" width="180" />
+  <h1 align="center">FlavorFlow</h1>
 </p>
 
 # Fetch Clients GitHub Action
 
-[![Latest Release](https://img.shields.io/github/v/release/lucianosantosdev/prisme-fetch-clients-action?label=latest%20version)](https://github.com/lucianosantosdev/prisme-fetch-clients-action/releases)
+[![Latest Release](https://img.shields.io/github/v/release/FlavorFlow-io/fetch-flavors-action?label=latest%20version)](https://github.com/FlavorFlow-io/fetch-flavors-action/releases)
 
 This action fetches and outputs the available Clients for your project. It is useful for workflows that need to dynamically retrieve and use flavor information (e.g., for building, testing, or deploying different variants).
 
@@ -33,7 +34,7 @@ The list of available Clients as a JSON array string.
 # Access the output Clients in a subsequent step:
 steps:
   - id: fetch-clients
-  uses: lucianosantosdev/flavorflow-fetch-clients-action@v1
+  uses: FlavorFlow-io/fetch-flavors-action@v1
     with:
       project-api-key: ${{ secrets.PROJECT_API_KEY }}
   - name: Print Clients
@@ -52,7 +53,7 @@ jobs:
       Clients: ${{ steps.fetch-clients.outputs.Clients }}
     steps:
       - id: fetch-clients
-  uses: lucianosantosdev/flavorflow-fetch-clients-action@v1
+  uses: FlavorFlow-io/fetch-flavors-action@v1
         with:
           project-api-key: ${{ secrets.PROJECT_API_KEY }}
 
