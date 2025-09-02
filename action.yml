@@ -11,7 +11,7 @@ inputs:
     required: true
 
 outputs:
-  Clients:
+  flavors:
     description: 'JSON array of all Clients'
 
 runs:

@@ -33,12 +33,12 @@ The list of available Clients as a JSON array string.
 ```yaml
 # Access the output Clients in a subsequent step:
 steps:
-  - id: fetch-clients
+  - id: fetch-flavors
   uses: FlavorFlow-io/fetch-flavors-action@v1
     with:
       project-api-key: ${{ secrets.PROJECT_API_KEY }}
   - name: Print Clients
-    run: echo "Clients: ${{ steps.fetch-clients.outputs.Clients }}"
+    run: echo "Clients: ${{ steps.fetch-flavors.outputs.Clients }}"
 ```
 
 ## Matrix build example
@@ -47,22 +47,22 @@ You can use the output Clients to create a dynamic matrix build in your workflow
 
 ```yaml
 jobs:
-  fetch-clients:
+  fetch-flavors:
     runs-on: ubuntu-latest
     outputs:
-      Clients: ${{ steps.fetch-clients.outputs.Clients }}
+      flavors: ${{ steps.fetch-flavors.outputs.flavors }}
     steps:
-      - id: fetch-clients
+      - id: fetch-flavors
   uses: FlavorFlow-io/fetch-flavors-action@v1
         with:
           project-api-key: ${{ secrets.PROJECT_API_KEY }}
 
   build:
-    needs: fetch-clients
+    needs: fetch-flavors
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flavor: ${{ fromJson(needs.fetch-clients.outputs.Clients) }}
+        flavor: ${{ fromJson(needs.fetch-flavors.outputs.flavors) }}
     steps:
       - name: Build for flavor
         run: |

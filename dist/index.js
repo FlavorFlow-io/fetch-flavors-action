@@ -27246,7 +27246,7 @@ function requireCore () {
 
 var coreExports = requireCore();
 
-async function fetchClients(apiKey) {
+async function fetchFlavors(apiKey) {
   try {
     const response = await fetch("https://ilesfsxvmvavrlmojmba.supabase.co/functions/v1/fetch-clients", {
       method: "GET",
@@ -27276,8 +27276,8 @@ async function fetchClients(apiKey) {
     const data = await response.json();
     
     // Extract Clients array from the response
-    if (!data.Clients || !Array.isArray(data.Clients)) {
-      throw new Error("Response does not contain a valid 'Clients' array");
+    if (!data.flavors || !Array.isArray(data.flavors)) {
+      throw new Error("Response does not contain a valid 'flavors' array");
     }
     
     return data.Clients;
@@ -27294,18 +27294,18 @@ try {
     throw new Error("project-api-key input is required");
   }
 
-  coreExports.info("Fetching Clients...");
+  coreExports.info("Fetching flavors...");
 
-  // Fetch Clients using the API key
-  const Clients = await fetchClients(apiKey);
+  // Fetch flavors using the API key
+  const flavors = await fetchFlavors(apiKey);
   
-  coreExports.info(`Successfully fetched ${Clients.length || 0} Clients`);
+  coreExports.info(`Successfully fetched ${flavors.length || 0} flavors`);
   
   // Set outputs for matrix strategy
-  coreExports.setOutput("Clients", JSON.stringify({ include: Clients }));
+  coreExports.setOutput("flavors", JSON.stringify({ include: flavors }));
   
-  // Log the Clients for debugging
-  coreExports.info(`Clients: ${JSON.stringify(Clients, null, 2)}`);
+  // Log the flavors for debugging
+  coreExports.info(`flavors: ${JSON.stringify(flavors, null, 2)}`);
 
 } catch (error) {
   coreExports.setFailed(error.message);
