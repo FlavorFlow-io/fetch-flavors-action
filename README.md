@@ -1,28 +1,28 @@
 <p align="center">
-  <img src="./prisme_logo.png" alt="Prisme Logo" width="180" />
+  <img src="./flavorflow_logo.png" alt="FlavorFlow Logo" width="180" />
 </p>
 
-# Fetch Flavors GitHub Action
+# Fetch Clients GitHub Action
 
-[![Latest Release](https://img.shields.io/github/v/release/lucianosantosdev/prisme-fetch-flavors-action?label=latest%20version)](https://github.com/lucianosantosdev/prisme-fetch-flavors-action/releases)
+[![Latest Release](https://img.shields.io/github/v/release/lucianosantosdev/prisme-fetch-clients-action?label=latest%20version)](https://github.com/lucianosantosdev/prisme-fetch-clients-action/releases)
 
-This action fetches and outputs the available flavors for your project. It is useful for workflows that need to dynamically retrieve and use flavor information (e.g., for building, testing, or deploying different variants).
+This action fetches and outputs the available Clients for your project. It is useful for workflows that need to dynamically retrieve and use flavor information (e.g., for building, testing, or deploying different variants).
 
 **About the SaaS:**
 
-[prisme.lucianosantos.dev](https://prisme.lucianosantos.dev) is a portal to manage white-label app clients. It helps you organize, configure, and maintain multiple branded versions of your application, streamlining the process of delivering customized apps to different customers.
+[flavorflow.io](https://flavorflow.io) is a portal to manage white-label app clients. It helps you organize, configure, and maintain multiple branded versions of your application, streamlining the process of delivering customized apps to different customers.
 
 ## Inputs
 
 ### `project-api-key`
 
-**Required** The project API key used to fetch flavors from the API.
+**Required** The project API key used to fetch Clients from the API.
 
 ## Outputs
 
-### `flavors`
+### `Clients`
 
-The list of available flavors as a JSON array string.
+The list of available Clients as a JSON array string.
 
 
 ## Example usage
@@ -30,38 +30,38 @@ The list of available flavors as a JSON array string.
 **Note:** Replace `v1` with the latest version shown in the badge above, or use a specific version tag for better reproducibility.
 
 ```yaml
-# Access the output flavors in a subsequent step:
+# Access the output Clients in a subsequent step:
 steps:
-  - id: fetch-flavors
-    uses: lucianosantosdev/prisme-fetch-flavors-action@v1
+  - id: fetch-clients
+  uses: lucianosantosdev/flavorflow-fetch-clients-action@v1
     with:
       project-api-key: ${{ secrets.PROJECT_API_KEY }}
-  - name: Print flavors
-    run: echo "Flavors: ${{ steps.fetch-flavors.outputs.flavors }}"
+  - name: Print Clients
+    run: echo "Clients: ${{ steps.fetch-clients.outputs.Clients }}"
 ```
 
 ## Matrix build example
 
-You can use the output flavors to create a dynamic matrix build in your workflow:
+You can use the output Clients to create a dynamic matrix build in your workflow:
 
 ```yaml
 jobs:
-  fetch-flavors:
+  fetch-clients:
     runs-on: ubuntu-latest
     outputs:
-      flavors: ${{ steps.fetch-flavors.outputs.flavors }}
+      Clients: ${{ steps.fetch-clients.outputs.Clients }}
     steps:
-      - id: fetch-flavors
-        uses: lucianosantosdev/prisme-fetch-flavors-action@v1
+      - id: fetch-clients
+  uses: lucianosantosdev/flavorflow-fetch-clients-action@v1
         with:
           project-api-key: ${{ secrets.PROJECT_API_KEY }}
 
   build:
-    needs: fetch-flavors
+    needs: fetch-clients
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flavor: ${{ fromJson(needs.fetch-flavors.outputs.flavors) }}
+        flavor: ${{ fromJson(needs.fetch-clients.outputs.Clients) }}
     steps:
       - name: Build for flavor
         run: |

@@ -1,8 +1,8 @@
 import * as core from "@actions/core";
 
-async function fetchFlavors(apiKey) {
+async function fetchClients(apiKey) {
   try {
-    const response = await fetch("https://ilesfsxvmvavrlmojmba.supabase.co/functions/v1/project-flavors", {
+    const response = await fetch("https://ilesfsxvmvavrlmojmba.supabase.co/functions/v1/project-Clients", {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
@@ -29,14 +29,14 @@ async function fetchFlavors(apiKey) {
 
     const data = await response.json();
     
-    // Extract flavors array from the response
-    if (!data.flavors || !Array.isArray(data.flavors)) {
-      throw new Error("Response does not contain a valid 'flavors' array");
+    // Extract Clients array from the response
+    if (!data.Clients || !Array.isArray(data.Clients)) {
+      throw new Error("Response does not contain a valid 'Clients' array");
     }
     
-    return data.flavors;
+    return data.Clients;
   } catch (error) {
-    throw new Error(`Failed to fetch flavors: ${error.message}`);
+    throw new Error(`Failed to fetch Clients: ${error.message}`);
   }
 }
 
@@ -48,18 +48,18 @@ try {
     throw new Error("project-api-key input is required");
   }
 
-  core.info("Fetching flavors...");
+  core.info("Fetching Clients...");
 
-  // Fetch flavors using the API key
-  const flavors = await fetchFlavors(apiKey);
+  // Fetch Clients using the API key
+  const Clients = await fetchClients(apiKey);
   
-  core.info(`Successfully fetched ${flavors.length || 0} flavors`);
+  core.info(`Successfully fetched ${Clients.length || 0} Clients`);
   
   // Set outputs for matrix strategy
-  core.setOutput("flavors", JSON.stringify({ include: flavors }));
+  core.setOutput("Clients", JSON.stringify({ include: Clients }));
   
-  // Log the flavors for debugging
-  core.info(`Flavors: ${JSON.stringify(flavors, null, 2)}`);
+  // Log the Clients for debugging
+  core.info(`Clients: ${JSON.stringify(Clients, null, 2)}`);
 
 } catch (error) {
   core.setFailed(error.message);

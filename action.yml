@@ -1,5 +1,5 @@
-name: Prisme Fetch Flavors
-description: Fetch flavors from API and generate matrix for builds
+name: FlavorFlow Fetch Clients
+description: Fetch Clients from API and generate matrix for builds
 
 branding:
   icon: smartphone
@@ -7,12 +7,12 @@ branding:
 
 inputs:
   project-api-key:
-    description: 'The project API key to fetch flavors'
+    description: 'The project API key to fetch Clients'
     required: true
 
 outputs:
-  flavors:
-    description: 'JSON array of all flavors'
+  Clients:
+    description: 'JSON array of all Clients'
 
 runs:
   using: node20
