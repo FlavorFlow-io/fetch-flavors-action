@@ -29,6 +29,9 @@ async function fetchFlavors(apiKey) {
 
     const data = await response.json();
     
+    // Print raw json
+    core.debug(`Raw response: ${JSON.stringify(data, null, 2)}`);
+
     // Extract Clients array from the response
     if (!data.flavors || !Array.isArray(data.flavors)) {
       throw new Error("Response does not contain a valid 'flavors' array");
