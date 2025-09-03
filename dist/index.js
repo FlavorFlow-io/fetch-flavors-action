@@ -27274,13 +27274,12 @@ async function fetchFlavors(apiKey) {
     }
 
     const data = await response.json();
-    
     // Extract Clients array from the response
-    if (!data.flavors || !Array.isArray(data.flavors)) {
-      throw new Error("Response does not contain a valid 'flavors' array");
+    if (!data.clients || !Array.isArray(data.clients)) {
+      throw new Error("Response does not contain a valid 'clients' array");
     }
     
-    return data.Clients;
+    return data.clients;
   } catch (error) {
     throw new Error(`Failed to fetch Clients: ${error.message}`);
   }
@@ -27302,7 +27301,7 @@ try {
   coreExports.info(`Successfully fetched ${flavors.length || 0} flavors`);
   
   // Set outputs for matrix strategy
-  coreExports.setOutput("flavors", JSON.stringify({ include: flavors }));
+  coreExports.setOutput("flavors", JSON.stringify({ flavors: flavors }));
   
   // Log the flavors for debugging
   coreExports.info(`flavors: ${JSON.stringify(flavors, null, 2)}`);

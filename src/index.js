@@ -28,16 +28,12 @@ async function fetchFlavors(apiKey) {
     }
 
     const data = await response.json();
-    
-    // Print raw json
-    core.debug(`Raw response: ${JSON.stringify(data, null, 2)}`);
-
     // Extract Clients array from the response
-    if (!data.flavors || !Array.isArray(data.flavors)) {
-      throw new Error("Response does not contain a valid 'flavors' array");
+    if (!data.clients || !Array.isArray(data.clients)) {
+      throw new Error("Response does not contain a valid 'clients' array");
     }
     
-    return data.Clients;
+    return data.clients;
   } catch (error) {
     throw new Error(`Failed to fetch Clients: ${error.message}`);
   }
@@ -46,23 +42,21 @@ async function fetchFlavors(apiKey) {
 try {
   // Get inputs
   const apiKey = core.getInput("project-api-key");
+  
 
   if (!apiKey) {
     throw new Error("project-api-key input is required");
   }
 
-  core.info("Fetching flavors...");
+  core.info("🔍 Fetching available flavors...");
 
   // Fetch flavors using the API key
   const flavors = await fetchFlavors(apiKey);
   
-  core.info(`Successfully fetched ${flavors.length || 0} flavors`);
+  core.info(`✅ Successfully fetched ${flavors.length || 0} flavors`);
   
   // Set outputs for matrix strategy
-  core.setOutput("flavors", JSON.stringify({ include: flavors }));
-  
-  // Log the flavors for debugging
-  core.info(`flavors: ${JSON.stringify(flavors, null, 2)}`);
+  core.setOutput("flavors", JSON.stringify({ flavors: flavors }));
 
 } catch (error) {
   core.setFailed(error.message);
