@@ -27246,15 +27246,18 @@ function requireCore () {
 
 var coreExports = requireCore();
 
-async function fetchFlavors(apiKey) {
+async function fetchFlavors(apiKey, projectId) {
   try {
-    const response = await fetch("https://api.flavorflow.io/v1/clients", {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Accept": "application/json"
+    const response = await fetch(
+      `https://api.flavorflow.io/v1/projects/${encodeURIComponent(projectId)}/clients`,
+      {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Accept": "application/json"
+        }
       }
-    });
+    );
 
     if (!response.ok) {
       let errorMessage = `HTTP error! status: ${response.status}`;
@@ -27289,16 +27292,19 @@ async function fetchFlavors(apiKey) {
 try {
   // Get inputs
   const apiKey = coreExports.getInput("project-api-key");
-  
+  const projectId = coreExports.getInput("project-id");
 
   if (!apiKey) {
     throw new Error("project-api-key input is required");
   }
+  if (!projectId) {
+    throw new Error("project-id input is required");
+  }
 
-  coreExports.info("🔍 Fetching available flavors...");
+  coreExports.info("🔍 Fetching available clients...");
 
-  // Fetch flavors using the API key
-  const flavors = await fetchFlavors(apiKey);
+  // Fetch clients for the project using the API key
+  const flavors = await fetchFlavors(apiKey, projectId);
   
   coreExports.info(`✅ Successfully fetched ${flavors.length || 0} flavors`);
   

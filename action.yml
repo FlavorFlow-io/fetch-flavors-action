@@ -9,6 +9,9 @@ inputs:
   project-api-key:
     description: 'The project API key to fetch Clients'
     required: true
+  project-id:
+    description: 'The project ID to fetch Clients for'
+    required: true
 
 outputs:
   flavors:
