@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 
 async function fetchFlavors(apiKey) {
   try {
-    const response = await fetch("https://ilesfsxvmvavrlmojmba.supabase.co/functions/v1/fetch-clients", {
+    const response = await fetch("https://api.flavorflow.io/v1/clients", {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
@@ -27,13 +27,14 @@ async function fetchFlavors(apiKey) {
       throw new Error(errorMessage);
     }
 
-    const data = await response.json();
-    // Extract Clients array from the response
-    if (!data.clients || !Array.isArray(data.clients)) {
-      throw new Error("Response does not contain a valid 'clients' array");
+    const body = await response.json();
+    // The /v1 API wraps payloads in a { data, error } envelope; the list of
+    // clients is the array under `data`.
+    if (!body.data || !Array.isArray(body.data)) {
+      throw new Error("Response does not contain a valid 'data' array");
     }
-    
-    return data.clients;
+
+    return body.data;
   } catch (error) {
     throw new Error(`Failed to fetch Clients: ${error.message}`);
   }

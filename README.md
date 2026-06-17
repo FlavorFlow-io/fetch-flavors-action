@@ -21,29 +21,28 @@ This action fetches and outputs the available Clients for your project. It is us
 
 ## Outputs
 
-### `Clients`
+### `flavors`
 
-The list of available Clients as a JSON array string.
-
+A JSON object string wrapping the list of clients: `{ "flavors": [ ... ] }`. Each entry is a client object (`id`, `name`, `app_name`, `package_name`, `logo_url`, `theme`, `variables`). The wrapper shape is designed to be dropped straight into a matrix `include`.
 
 ## Example usage
 
 **Note:** Replace `v1` with the latest version shown in the badge above, or use a specific version tag for better reproducibility.
 
 ```yaml
-# Access the output Clients in a subsequent step:
+# Access the output in a subsequent step:
 steps:
   - id: fetch-flavors
-  uses: FlavorFlow-io/fetch-flavors-action@v1
+    uses: FlavorFlow-io/fetch-flavors-action@v1
     with:
       project-api-key: ${{ secrets.PROJECT_API_KEY }}
-  - name: Print Clients
-    run: echo "Clients: ${{ steps.fetch-flavors.outputs.Clients }}"
+  - name: Print flavors
+    run: echo "Flavors: ${{ steps.fetch-flavors.outputs.flavors }}"
 ```
 
 ## Matrix build example
 
-You can use the output Clients to create a dynamic matrix build in your workflow:
+You can use the output to create a dynamic matrix build in your workflow:
 
 ```yaml
 jobs:
@@ -53,7 +52,7 @@ jobs:
       flavors: ${{ steps.fetch-flavors.outputs.flavors }}
     steps:
       - id: fetch-flavors
-  uses: FlavorFlow-io/fetch-flavors-action@v1
+        uses: FlavorFlow-io/fetch-flavors-action@v1
         with:
           project-api-key: ${{ secrets.PROJECT_API_KEY }}
 
@@ -62,10 +61,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flavor: ${{ fromJson(needs.fetch-flavors.outputs.flavors) }}
+        include: ${{ fromJson(needs.fetch-flavors.outputs.flavors).flavors }}
     steps:
       - name: Build for flavor
         run: |
-          echo "Building for flavor: ${{ matrix.flavor }}"
+          echo "Building for flavor: ${{ matrix.name }}"
           # add your build steps here
 ```
