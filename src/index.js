@@ -45,11 +45,11 @@ async function fetchFlavors(apiKey, projectId) {
 
 try {
   // Get inputs
-  const apiKey = core.getInput("project-api-key");
+  const apiKey = core.getInput("api-key");
   const projectId = core.getInput("project-id");
 
   if (!apiKey) {
-    throw new Error("project-api-key input is required");
+    throw new Error("api-key input is required");
   }
   if (!projectId) {
     throw new Error("project-id input is required");

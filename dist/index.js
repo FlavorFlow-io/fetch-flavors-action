@@ -27291,11 +27291,11 @@ async function fetchFlavors(apiKey, projectId) {
 
 try {
   // Get inputs
-  const apiKey = coreExports.getInput("project-api-key");
+  const apiKey = coreExports.getInput("api-key");
   const projectId = coreExports.getInput("project-id");
 
   if (!apiKey) {
-    throw new Error("project-api-key input is required");
+    throw new Error("api-key input is required");
   }
   if (!projectId) {
     throw new Error("project-id input is required");

@@ -6,7 +6,7 @@ branding:
   color: blue
 
 inputs:
-  project-api-key:
+  api-key:
     description: 'The project API key to fetch Clients'
     required: true
   project-id:
