@@ -61,10 +61,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include: ${{ fromJson(needs.fetch-flavors.outputs.flavors).flavors }}
+        # The output is a bare array of matrix entries, so a single fromJson(...)
+        # is all that's needed — no `.flavors` access.
+        include: ${{ fromJson(needs.fetch-flavors.outputs.flavors) }}
     steps:
       - name: Build for flavor
         run: |
-          echo "Building for flavor: ${{ matrix.name }}"
+          echo "Building for flavor: ${{ matrix.flavor.name }}"
+          # Each entry nests the full client configuration under `flavor`, so
+          # `${{ matrix.flavor }}` can be passed straight to apply-flavor-action
+          # and individual fields read via `${{ matrix.flavor.<field> }}`.
           # add your build steps here
 ```

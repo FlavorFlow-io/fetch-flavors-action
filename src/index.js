@@ -61,9 +61,18 @@ try {
   const flavors = await fetchFlavors(apiKey, projectId);
   
   core.info(`✅ Successfully fetched ${flavors.length || 0} flavors`);
-  
-  // Set outputs for matrix strategy
-  core.setOutput("flavors", JSON.stringify({ flavors: flavors }));
+
+  // Build the matrix. Each entry nests the full client configuration under
+  // `flavor`, so a consuming workflow can read individual fields
+  // (`matrix.flavor.name`, `matrix.flavor.app_name`, …) and hand the whole
+  // object to apply-flavor-action as `${{ matrix.flavor }}` — GitHub serializes
+  // it to JSON for the input, so no `toJson(matrix)` round-trip is needed.
+  const matrix = flavors.map((flavor) => ({ flavor }));
+
+  // A bare JSON array the workflow consumes with `include: ${{ fromJson(...) }}`
+  // (fromJson is unavoidable: matrix.include must be a real array and job
+  // outputs are always strings).
+  core.setOutput("flavors", JSON.stringify(matrix));
 
 } catch (error) {
   core.setFailed(error.message);
