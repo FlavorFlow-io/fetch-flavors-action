@@ -67,9 +67,9 @@ jobs:
     steps:
       - name: Build for flavor
         run: |
-          echo "Building for flavor: ${{ matrix.flavor.name }}"
-          # Each entry nests the full client configuration under `flavor`, so
-          # `${{ matrix.flavor }}` can be passed straight to apply-flavor-action
-          # and individual fields read via `${{ matrix.flavor.<field> }}`.
+          echo "Building for flavor: ${{ matrix.name }}"
+          # Each entry has `name`, `app_name`, and `config` (the full client
+          # configuration as a JSON string). `config` is already a string, so it
+          # can be passed straight to apply-flavor-action — no toJson needed.
           # add your build steps here
 ```

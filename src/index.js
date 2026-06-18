@@ -62,12 +62,18 @@ try {
   
   core.info(`✅ Successfully fetched ${flavors.length || 0} flavors`);
 
-  // Build the matrix. Each entry nests the full client configuration under
-  // `flavor`, so a consuming workflow can read individual fields
-  // (`matrix.flavor.name`, `matrix.flavor.app_name`, …) and hand the whole
-  // object to apply-flavor-action as `${{ matrix.flavor }}` — GitHub serializes
-  // it to JSON for the input, so no `toJson(matrix)` round-trip is needed.
-  const matrix = flavors.map((flavor) => ({ flavor }));
+  // Build the matrix. Each entry carries the scalar fields a workflow needs for
+  // labelling (`name`, `app_name`) plus `config`: the full client configuration
+  // pre-serialized as a JSON string. `config` is already a string, so the
+  // workflow hands it straight to apply-flavor-action (`flavor: ${{ matrix.config }}`)
+  // with no `toJson(matrix)` round-trip. (An object can't be passed to a string
+  // action input directly — GitHub rejects it as "a mapping was not expected" —
+  // which is why we pre-serialize here rather than nest the object.)
+  const matrix = flavors.map((flavor) => ({
+    name: flavor.name || flavor.id,
+    app_name: flavor.app_name || flavor.name || flavor.id,
+    config: JSON.stringify(flavor),
+  }));
 
   // A bare JSON array the workflow consumes with `include: ${{ fromJson(...) }}`
   // (fromJson is unavoidable: matrix.include must be a real array and job
