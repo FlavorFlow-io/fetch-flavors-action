@@ -27293,6 +27293,7 @@ try {
   // Get inputs
   const apiKey = coreExports.getInput("api-key");
   const projectId = coreExports.getInput("project-id");
+  const clientId = coreExports.getInput("client-id");
 
   if (!apiKey) {
     throw new Error("api-key input is required");
@@ -27304,9 +27305,21 @@ try {
   coreExports.info("🔍 Fetching available clients...");
 
   // Fetch clients for the project using the API key
-  const flavors = await fetchFlavors(apiKey, projectId);
-  
-  coreExports.info(`✅ Successfully fetched ${flavors.length || 0} flavors`);
+  const allFlavors = await fetchFlavors(apiKey, projectId);
+
+  coreExports.info(`✅ Successfully fetched ${allFlavors.length || 0} flavors`);
+
+  // With client-id set, only that client is returned. No match is a warning,
+  // not a failure: FlavorFlow's "send test event" uses a client that does not
+  // exist, and a disabled client is not listed.
+  const flavors = clientId
+    ? allFlavors.filter((flavor) => flavor.id === clientId)
+    : allFlavors;
+  if (clientId && flavors.length === 0) {
+    coreExports.warning(`No client matches id '${clientId}' — nothing to build.`);
+  } else if (clientId) {
+    coreExports.info(`Selected client '${flavors[0].name || clientId}'.`);
+  }
 
   // Build the matrix. Each entry carries the scalar fields a workflow needs for
   // labelling (`name`, `app_name`) plus `config`: the full client configuration
@@ -27325,6 +27338,7 @@ try {
   // (fromJson is unavoidable: matrix.include must be a real array and job
   // outputs are always strings).
   coreExports.setOutput("flavors", JSON.stringify(matrix));
+  coreExports.setOutput("client-name", clientId && flavors.length ? flavors[0].name || "" : "");
 
 } catch (error) {
   coreExports.setFailed(error.message);

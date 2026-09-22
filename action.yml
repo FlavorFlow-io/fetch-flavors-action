@@ -12,8 +12,14 @@ inputs:
   project-id:
     description: 'The project ID to fetch Clients for'
     required: true
+  client-id:
+    description: 'Return only this client. Leave empty for every client in the project.'
+    required: false
+    default: ''
 
 outputs:
+  client-name:
+    description: 'Name of the selected client when client-id is set; empty otherwise.'
   flavors:
     description: 'JSON array of build-matrix entries, one per Client. Each entry has name, app_name, and config (the full client configuration as a JSON string). Feed it to a matrix with include + fromJson(...), and pass matrix.config straight to apply-flavor-action.'
 

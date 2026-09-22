@@ -15,15 +15,27 @@ This action fetches and outputs the available Clients for your project. It is us
 
 ## Inputs
 
-### `project-api-key`
+### `api-key`
 
 **Required** The project API key used to fetch Clients from the API.
+
+### `project-id`
+
+**Required** The FlavorFlow project to fetch Clients from.
+
+### `client-id`
+
+**Optional** Return only this client. Leave empty for every client in the project.
 
 ## Outputs
 
 ### `flavors`
 
 A JSON object string wrapping the list of clients: `{ "flavors": [ ... ] }`. Each entry is a client object (`id`, `name`, `app_name`, `package_name`, `logo_url`, `theme`, `variables`). The wrapper shape is designed to be dropped straight into a matrix `include`.
+
+### `client-name`
+
+The selected client's name when `client-id` is set; empty otherwise.
 
 ## Example usage
 
